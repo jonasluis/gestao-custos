@@ -1,6 +1,7 @@
 package br.com.jonasluis.gestao_custos.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jonasluis.gestao_custos.custom_messages.ErrorMessage;
 import br.com.jonasluis.gestao_custos.entity.Despesa;
+import br.com.jonasluis.gestao_custos.useCases.BuscarDespesaUseCase;
 import br.com.jonasluis.gestao_custos.useCases.CadastroDespesaUseCase;
 
 @RestController
@@ -22,6 +24,9 @@ public class GestaoDespesaController {
 
     @Autowired
     private CadastroDespesaUseCase cadastroDespesaUseCase;
+
+    @Autowired
+    private BuscarDespesaUseCase buscarDespesaUseCase;
     
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Despesa despesa) {
@@ -39,7 +44,8 @@ public class GestaoDespesaController {
 
     //gestao/find/jonas@gail.com
     @GetMapping("/{email}")
-    public void findByEmailAndDate(@PathVariable String email, @RequestParam(required = false) LocalDate data) {
+    public List<Despesa> findByEmailAndDate(@PathVariable String email, @RequestParam(required = false) LocalDate data) {
+        return buscarDespesaUseCase.execute(email, data);
 
     }
 
