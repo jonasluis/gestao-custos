@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Column;
@@ -19,16 +20,22 @@ public class Despesa {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(nullable = false)
     private String descricao;
+    @Column(nullable = false)
     private LocalDate data;
+    @Column(nullable = false)
     private BigDecimal valor;
-    private String categoria;
-    private String email;
 
-    @CreatedDate
+    @Column(length = 100, nullable = false)
+    private String categoria;
+    @Column(nullable = false)
+    private String email;
+    
+    @CreationTimestamp
     @Column(name = "data_criacao")
     private LocalDate dataCriacao;
-
+    
     public UUID getId() {
         return id;
     }
@@ -84,5 +91,13 @@ public class Despesa {
     public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
+
+    @Override
+    public String toString() {
+        return "Despesa [id=" + id + ", descricao=" + descricao + ", data=" + data + ", valor=" + valor + ", categoria="
+                + categoria + ", email=" + email + ", dataCriacao=" + dataCriacao + "]";
+    }
+
+    
     
 }
