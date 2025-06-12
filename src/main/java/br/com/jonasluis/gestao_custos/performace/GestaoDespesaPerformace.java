@@ -3,6 +3,8 @@ package br.com.jonasluis.gestao_custos.performace;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import br.com.jonasluis.gestao_custos.repository.DespesaRepository;
 
 @RequestMapping("/gestao/performace")
 @RestController
+@EnableCaching
 public class GestaoDespesaPerformace {
 
     @Autowired
@@ -56,4 +59,17 @@ public class GestaoDespesaPerformace {
         return ResponseEntity.ok(despesas);
     }
     
+    @Cacheable(value = "gastosPorEmailCache", key = "#email + '-'+ #pageable.pageNumber + '-' + #pageable.pageSize + '-'")
+    @GetMapping("/cache/{email}")
+    public ResponseEntity<Page<Despesa>> cacheComPaginacao( @PathVariable String email, Pageable pageable){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        var despesas = despesaRepository.findByEmail(email, pageable);
+        stopWatch.stop();
+
+        System.out.println("Tempo (cache com paginacao): " + stopWatch.getTotalTimeMillis() + " ms");
+        return ResponseEntity.ok(despesas);
+    }
+
 }
